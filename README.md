@@ -2,6 +2,10 @@
 
 A native Grafana datasource plugin for PRTG Network Monitor API v2, providing seamless integration between PRTG and Grafana for monitoring and visualization.
 
+## Attribution
+
+This plugin is derived from the original dashboard concept created by [stylersnico](https://github.com/stylersnico/PRTG-API-v2-Grafana-Dashboard/) and has been converted into a native Grafana datasource plugin for better integration and functionality.
+
 ## Features
 
 - **Native Integration**: Direct connection to PRTG API v2 without external dependencies
@@ -26,7 +30,7 @@ grafana-cli plugins install prtgapiv2-datasource
 ```
 
 ### Manual Installation
-1. Download the latest release from [GitHub Releases](https://github.com/stylersnico/PRTG-API-v2-Grafana-Dashboard/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/jkowall/PRTG-API-v2-Grafana-Plugin/releases)
 2. Extract to your Grafana plugins directory: `/var/lib/grafana/plugins/`
 3. Restart Grafana
 4. Enable the plugin in Grafana Admin > Plugins
@@ -34,8 +38,8 @@ grafana-cli plugins install prtgapiv2-datasource
 ### Development Installation
 ```bash
 # Clone the repository
-git clone https://github.com/stylersnico/PRTG-API-v2-Grafana-Dashboard.git
-cd PRTG-API-v2-Grafana-Dashboard
+git clone https://github.com/jkowall/PRTG-API-v2-Grafana-Plugin.git
+cd PRTG-API-v2-Grafana-Plugin
 
 # Install dependencies
 npm install
@@ -286,7 +290,7 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 
 ## Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/stylersnico/PRTG-API-v2-Grafana-Dashboard/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/jkowall/PRTG-API-v2-Grafana-Plugin/issues)
 - **Documentation**: Check PRTG API v2 docs at `https://your-prtg-server:1616/api/v2/oas/`
 - **Community**: Grafana Community Forums
 

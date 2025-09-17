@@ -315,4 +315,4 @@ This conversion positions the PRTG integration as a first-class Grafana datasour
 **For questions or issues with the conversion, please refer to:**
 - [README.md](README.md) - Complete plugin documentation
 - [CHANGELOG.md](CHANGELOG.md) - Version history and changes
-- [GitHub Issues](https://github.com/stylersnico/PRTG-API-v2-Grafana-Dashboard/issues) - Bug reports and feature requests
+- [GitHub Issues](https://github.com/jkowall/PRTG-API-v2-Grafana-Plugin/issues) - Bug reports and feature requests
