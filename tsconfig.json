@@ -1,5 +1,5 @@
 {
-  "extends": ["@grafana/tsconfig"],
+  "extends": "@grafana/tsconfig",
   "compilerOptions": {
     "rootDir": "./src",
     "baseUrl": "./src",

@@ -25,12 +25,12 @@ export interface PRTGApiResponse<T = any> {
 export class PRTGApiClient {
   private baseUrl: string;
   private apiKey: string;
-  private allowInsecure: boolean;
+  // private allowInsecure: boolean; // TODO: Implement SSL verification settings
 
   constructor(options: PRTGApiClientOptions) {
     this.baseUrl = `${options.url}:${options.port}/api/v2`;
     this.apiKey = options.apiKey;
-    this.allowInsecure = options.allowInsecure;
+    // this.allowInsecure = options.allowInsecure; // TODO: Implement SSL verification
   }
 
   async query(options: PRTGQueryOptions): Promise<PRTGApiResponse<PRTGObject>> {
@@ -58,8 +58,8 @@ export class PRTGApiClient {
       }).toPromise();
 
       return {
-        data: response.data || [],
-        total: response.data?.length || 0,
+        data: response?.data || [],
+        total: response?.data?.length || 0,
         offset: offset || 0,
         limit: limit || 0,
       };

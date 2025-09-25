@@ -1,5 +1,5 @@
 import React, { ChangeEvent, PureComponent } from 'react';
-import { LegacyForms, InlineField, Input, Select } from '@grafana/ui';
+import { LegacyForms, InlineField, Select } from '@grafana/ui';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { PRTGDataSource } from '../datasource';
 import { PRTGDataSourceOptions, PRTGQuery } from '../types';
@@ -174,7 +174,7 @@ export class QueryEditor extends PureComponent<Props> {
             <div className="gf-form-label">
               <small>
                 Use the PRTG API v2 syntax for filters. 
-                Examples: "status = down", "name contains 'server'", "status = warning AND device = 'router'"
+                Examples: &quot;status = down&quot;, &quot;name contains &apos;server&apos;&quot;, &quot;status = warning AND device = &apos;router&apos;&quot;
               </small>
             </div>
           </div>

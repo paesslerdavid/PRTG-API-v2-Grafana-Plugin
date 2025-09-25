@@ -39,6 +39,8 @@ export function createFieldsFromPRTGData(
   return fieldsToShow.map(fieldName => ({
     name: formatFieldName(fieldName),
     type: getFieldTypeFromValue(getValueFromPath(sampleObject, fieldName)),
+    config: {},
+    values: [],
   }));
 }
 

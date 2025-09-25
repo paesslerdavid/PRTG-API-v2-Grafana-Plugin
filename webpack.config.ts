@@ -1,13 +1,8 @@
 import type { Configuration } from 'webpack';
-import { merge } from 'webpack-merge';
-import grafanaConfig from './.config/webpack/webpack.config';
+const grafanaConfig = require('./.config/webpack/webpack.config.js');
 
-const config = async (env: any): Promise<Configuration> => {
-  const baseConfig = await grafanaConfig(env);
-
-  return merge(baseConfig, {
-    // Add custom config here
-  });
+const config = (env: any): Configuration => {
+  return grafanaConfig(env);
 };
 
 export default config;

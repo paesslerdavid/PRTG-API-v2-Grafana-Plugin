@@ -17,7 +17,7 @@ export class PRTGDataSource extends DataSourceApi<PRTGQuery, PRTGDataSourceOptio
     super(instanceSettings);
 
     const { url, port = 1616, allowInsecure = false } = instanceSettings.jsonData;
-    const { apiKey = '' } = instanceSettings.decryptedSecureJsonData as PRTGSecureJsonData;
+    const { apiKey = '' } = (instanceSettings as any).decryptedSecureJsonData as PRTGSecureJsonData;
 
     this.apiClient = new PRTGApiClient({
       url: url || '',
@@ -28,7 +28,7 @@ export class PRTGDataSource extends DataSourceApi<PRTGQuery, PRTGDataSourceOptio
   }
 
   async query(options: DataQueryRequest<PRTGQuery>): Promise<DataQueryResponse> {
-    const { range } = options;
+    // const { range } = options; // TODO: Use range for time-based queries
     const data: MutableDataFrame[] = [];
 
     for (const target of options.targets) {
