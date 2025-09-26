@@ -1,0 +1,70 @@
+name: Build and Package PRTG API v2 Grafana Plugin
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: CI Build
+    runs-on: ubuntu-latest
+    env:
+      # Exposed to steps for conditional signing
+      GRAFANA_ACCESS_TOKEN: ${{ secrets.GRAFANA_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps (npm)
+        if: ${{ hashFiles('**/package-lock.json') != '' }}
+        run: npm ci
+
+      - name: Install deps (yarn)
+        if: ${{ hashFiles('**/yarn.lock') != '' }}
+        run: |
+          corepack enable
+          yarn install --frozen-lockfile
+
+      - name: CI build
+        run: npx --yes @grafana/plugin-tools@latest plugin:ci-build
+
+      - name: Sign plugin (cloud signing)
+        if: ${{ env.GRAFANA_ACCESS_TOKEN != '' }}
+        run: npx --yes @grafana/plugin-tools@latest plugin:sign
+        env:
+          GRAFANA_ACCESS_TOKEN: ${{ secrets.GRAFANA_ACCESS_TOKEN }}
+
+      - name: Upload packaged artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prtg-api-v2-grafana-plugin
+          path: dist/*.zip
+
+  release:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: prtg-api-v2-grafana-plugin
+          path: ./dist
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          draft: false
+          prerelease: false
