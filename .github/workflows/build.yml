@@ -1,4 +1,4 @@
-name: Build and Package PRTG API v2 Grafana Plugin
+name: Build PRTG Grafana Plugin
 
 on:
   push:
@@ -10,61 +10,66 @@ on:
 
 jobs:
   build:
-    name: CI Build
     runs-on: ubuntu-latest
-    env:
-      # Exposed to steps for conditional signing
-      GRAFANA_ACCESS_TOKEN: ${{ secrets.GRAFANA_ACCESS_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Detect package manager
+        id: pm
+        run: |
+          if [ -f yarn.lock ]; then
+            echo "pm=yarn" >> $GITHUB_OUTPUT
+          else
+            echo "pm=npm" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node for Yarn
+        if: steps.pm.outputs.pm == 'yarn'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Setup Node for npm
+        if: steps.pm.outputs.pm == 'npm'
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Enable Corepack (Yarn)
+        if: steps.pm.outputs.pm == 'yarn'
+        run: corepack enable
+
+      - name: Install deps (Yarn)
+        if: steps.pm.outputs.pm == 'yarn'
+        run: yarn install --immutable
 
       - name: Install deps (npm)
-        if: ${{ hashFiles('**/package-lock.json') != '' }}
+        if: steps.pm.outputs.pm == 'npm'
         run: npm ci
 
-      - name: Install deps (yarn)
-        if: ${{ hashFiles('**/yarn.lock') != '' }}
+      - name: Build (Yarn)
+        if: steps.pm.outputs.pm == 'yarn'
         run: |
-          corepack enable
-          yarn install --frozen-lockfile
+          yarn build
+          # or: yarn plugin:ci-build
 
-      - name: CI build
-        run: npx --yes @grafana/plugin-tools@latest plugin:ci-build
+      - name: Build (npm)
+        if: steps.pm.outputs.pm == 'npm'
+        run: |
+          npm run build
+          # or: npx @grafana/plugin-tools plugin:ci-build
 
-      - name: Sign plugin (cloud signing)
-        if: ${{ env.GRAFANA_ACCESS_TOKEN != '' }}
-        run: npx --yes @grafana/plugin-tools@latest plugin:sign
-        env:
-          GRAFANA_ACCESS_TOKEN: ${{ secrets.GRAFANA_ACCESS_TOKEN }}
+      - name: Package dist
+        run: |
+          cd dist && zip -r ../prtg-grafana-plugin.zip .
 
-      - name: Upload packaged artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: prtg-api-v2-grafana-plugin
-          path: dist/*.zip
-
-  release:
-    name: Publish Release
-    needs: build
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: prtg-api-v2-grafana-plugin
-          path: ./dist
-
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*.zip
-          draft: false
-          prerelease: false
+          name: prtg-grafana-plugin
+          path: prtg-grafana-plugin.zip
